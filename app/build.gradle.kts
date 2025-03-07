@@ -83,6 +83,9 @@ dependencies {
     implementation(libs.square.retrofit)
     implementation(libs.square.gson)
 
+    //Icons Extended
+    implementation(libs.androidx.material.icons.extended)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
