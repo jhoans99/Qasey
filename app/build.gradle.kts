@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.serialization)
     alias(libs.plugins.kapt)
     alias(libs.plugins.android.dagger.hilt)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -85,6 +86,11 @@ dependencies {
 
     //Icons Extended
     implementation(libs.androidx.material.icons.extended)
+
+    //Firebase
+    implementation(platform("com.google.firebase:firebase-bom:32.0.0"))
+    implementation("com.google.firebase:firebase-auth-ktx")
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

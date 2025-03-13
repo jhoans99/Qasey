@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ml.qasey.R
+import com.ml.qasey.ui.components.Loader
 import com.ml.qasey.ui.components.PrimaryButton
 import com.ml.qasey.ui.components.SimpleInputText
 import com.ml.qasey.ui.components.SimpleInputTextPassword
@@ -28,6 +29,10 @@ fun LoginRoute(
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    when {
+        uiState.isLoading -> Loader()
+    }
 
     LoginScreen(uiState)
 }
@@ -100,7 +105,7 @@ fun LoginBody(
             start.linkTo(parent.start)
             end.linkTo(parent.end)
         }, text = "Iniciar sesión") {
-
+            viewModel.login()
         }
     }
 }

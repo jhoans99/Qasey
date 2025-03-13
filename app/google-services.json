@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "622153648325",
+    "project_id": "qasey-36068",
+    "storage_bucket": "qasey-36068.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:622153648325:android:5b2a52a437a1bad99488ac",
+        "android_client_info": {
+          "package_name": "com.ml.qasey"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6AwQ6BSLXBLocwRhWRnTksvTBSuoYI1o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
