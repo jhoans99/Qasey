@@ -17,15 +17,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.ml.qasey.R
 import com.ml.qasey.ui.components.Loader
 import com.ml.qasey.ui.components.PrimaryButton
 import com.ml.qasey.ui.components.SimpleInputText
 import com.ml.qasey.ui.components.SimpleInputTextPassword
+import com.ml.qasey.ui.navigation.Home
 import com.ml.qasey.ui.theme.QaseyTheme
 
 @Composable
 fun LoginRoute(
+    navController: NavHostController,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -34,11 +38,16 @@ fun LoginRoute(
         uiState.isLoading -> Loader()
     }
 
-    LoginScreen(uiState)
+    LoginScreen(uiState) {
+        navController.navigate(Home)
+    }
 }
 
 @Composable
-fun LoginScreen(uiState: LoginUiState) {
+fun LoginScreen(
+    uiState: LoginUiState,
+    onNavigateHome: () -> Unit
+) {
     Scaffold { paddingValues ->
         Column(
             modifier = Modifier
@@ -48,7 +57,9 @@ fun LoginScreen(uiState: LoginUiState) {
             LoginBody(
                 modifier = Modifier,
                 uiState
-            )
+            ) {
+              onNavigateHome()
+            }
         }
     }
 }
@@ -57,7 +68,8 @@ fun LoginScreen(uiState: LoginUiState) {
 fun LoginBody(
     modifier: Modifier,
     uiState: LoginUiState,
-    viewModel: LoginViewModel = hiltViewModel()
+    viewModel: LoginViewModel = hiltViewModel(),
+    onNavigateHome: () -> Unit
 ) {
     ConstraintLayout(
         modifier.fillMaxSize()
@@ -105,7 +117,9 @@ fun LoginBody(
             start.linkTo(parent.start)
             end.linkTo(parent.end)
         }, text = "Iniciar sesión") {
-            viewModel.login()
+            viewModel.login {
+                onNavigateHome()
+            }
         }
     }
 }
@@ -114,6 +128,6 @@ fun LoginBody(
 @Composable
 fun LoginPreview() {
     QaseyTheme {
-        LoginRoute()
+        LoginRoute(rememberNavController())
     }
 }
