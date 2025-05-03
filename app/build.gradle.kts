@@ -2,9 +2,10 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.jetbrains.kotlin.serialization)
-    alias(libs.plugins.kapt)
+    id("com.google.devtools.ksp")
     alias(libs.plugins.android.dagger.hilt)
     id("com.google.gms.google-services")
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -43,9 +44,7 @@ android {
     buildFeatures {
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
-    }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -78,7 +77,7 @@ dependencies {
     //Dagger Hilt
     implementation(libs.dagger.hilt)
     implementation(libs.dagger.hilt.navigation)
-    kapt(libs.hilt.compiler)
+    ksp("com.google.dagger:hilt-android-compiler:2.51.1")
 
     //Retrofit
     implementation(libs.square.retrofit)
@@ -90,6 +89,7 @@ dependencies {
     //Firebase
     implementation(platform("com.google.firebase:firebase-bom:32.0.0"))
     implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-firestore")
 
 
     testImplementation(libs.junit)
@@ -101,7 +101,3 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 }
 
-
-kapt {
-    correctErrorTypes = true
-}

@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.ml.qasey.ui.dashboard.customer.CustomerDashboardRoute
+import com.ml.qasey.ui.dashboard.teamlead.TeamLeadDashboardRoute
 import com.ml.qasey.ui.home.HomeRoute
 import com.ml.qasey.ui.login.LoginRoute
 
@@ -16,8 +18,12 @@ fun AppNavigation() {
             LoginRoute(navController)
         }
 
-        composable<Home> {
-            HomeRoute()
+        composable<CustomerDashboard> {
+            CustomerDashboardRoute()
+        }
+
+        composable<TeamLeadDashboard> {
+            TeamLeadDashboardRoute()
         }
     }
 }

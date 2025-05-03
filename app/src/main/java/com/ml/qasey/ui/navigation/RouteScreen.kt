@@ -6,6 +6,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 object Login
 
+@Serializable
+object CustomerDashboard
 
 @Serializable
-object Home
+object TeamLeadDashboard

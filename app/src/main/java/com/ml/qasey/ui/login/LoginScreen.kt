@@ -24,7 +24,6 @@ import com.ml.qasey.ui.components.Loader
 import com.ml.qasey.ui.components.PrimaryButton
 import com.ml.qasey.ui.components.SimpleInputText
 import com.ml.qasey.ui.components.SimpleInputTextPassword
-import com.ml.qasey.ui.navigation.Home
 import com.ml.qasey.ui.theme.QaseyTheme
 
 @Composable
@@ -39,14 +38,14 @@ fun LoginRoute(
     }
 
     LoginScreen(uiState) {
-        navController.navigate(Home)
+        navController.navigate(it)
     }
 }
 
 @Composable
 fun LoginScreen(
     uiState: LoginUiState,
-    onNavigateHome: () -> Unit
+    onNavigateHome: (Any) -> Unit
 ) {
     Scaffold { paddingValues ->
         Column(
@@ -58,7 +57,7 @@ fun LoginScreen(
                 modifier = Modifier,
                 uiState
             ) {
-              onNavigateHome()
+              onNavigateHome(it)
             }
         }
     }
@@ -69,7 +68,7 @@ fun LoginBody(
     modifier: Modifier,
     uiState: LoginUiState,
     viewModel: LoginViewModel = hiltViewModel(),
-    onNavigateHome: () -> Unit
+    onNavigateHome: (Any) -> Unit
 ) {
     ConstraintLayout(
         modifier.fillMaxSize()
@@ -118,7 +117,7 @@ fun LoginBody(
             end.linkTo(parent.end)
         }, text = "Iniciar sesión") {
             viewModel.login {
-                onNavigateHome()
+                onNavigateHome(it)
             }
         }
     }

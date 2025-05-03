@@ -1,19 +1,18 @@
 package com.ml.qasey.ui.login
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.firebase.auth.FirebaseAuth
-import com.ml.qasey.data.LoginRepository
+import com.ml.qasey.data.repository.LoginRepository
 import com.ml.qasey.model.Result
+import com.ml.qasey.ui.navigation.CustomerDashboard
+import com.ml.qasey.ui.navigation.TeamLeadDashboard
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@Suppress("IMPLICIT_CAST_TO_ANY")
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginRepository: LoginRepository
@@ -32,7 +31,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun login(
-        onSuccessLogin:() -> Unit
+        onSuccessLogin:(Any) -> Unit
     ) {
         viewModelScope.launch {
             loginRepository.login(_uiState.value.userName,_uiState.value.password).collect {
@@ -46,7 +45,8 @@ class LoginViewModel @Inject constructor(
                     }
                     is Result.Success -> {
                         _uiState.value = _uiState.value.copy(isLoading = false)
-                        onSuccessLogin()
+                        val route = if(it.data == "customer") CustomerDashboard else TeamLeadDashboard
+                        onSuccessLogin(route)
                     }
                 }
             }

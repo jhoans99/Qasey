@@ -1,20 +1,19 @@
 [versions]
-agp = "8.4.0"
-kotlin = "1.9.0"
-coreKtx = "1.15.0"
+agp = "8.9.1"
+kotlin = "2.0.20"
+coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.0"
-composeBom = "2023.08.00"
+composeBom = "2024.09.00"
 navigationCompose = "2.8.2"
 kotlinSerialization = "1.6.3"
 constraintLayout = "1.1.0"
 viewModelCompose = "2.6.2"
-daggerHilt = "2.48"
-daggerNavigation = "1.0.0"
-kapt = "1.9.0"
+daggerHilt = "2.51.1"
+daggerNavigation = "1.2.0"
 retrofit = "2.9.0"
 gson = "2.9.0"
 
@@ -38,7 +37,6 @@ kotlin-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-j
 constraint-layout = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "constraintLayout"}
 androidx-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "viewModelCompose" }
 dagger-hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "daggerHilt"}
-hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "daggerHilt" }
 dagger-hilt-navigation = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "daggerNavigation" }
 square-retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit"}
 square-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "gson"}
@@ -48,6 +46,6 @@ androidx-material-icons-extended = {  group = "androidx.compose.material", name 
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin"}
-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kapt" }
 android-dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "daggerHilt" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 

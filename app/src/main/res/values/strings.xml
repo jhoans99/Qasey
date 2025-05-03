@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Qasey</string>
+
+
+    <string name="label_entry_case_number">Ingresa el número de caso</string>
+
+    <string name="text_button_init_case">Iniciar caso</string>
+
 </resources>

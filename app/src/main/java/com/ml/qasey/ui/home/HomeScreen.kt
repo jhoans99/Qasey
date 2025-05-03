@@ -8,10 +8,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.ml.qasey.ui.navigation.Home
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun HomeRoute() {
+fun HomeRoute(
+    viewModel: HomeViewModel = hiltViewModel()
+) {
 
 }
 
