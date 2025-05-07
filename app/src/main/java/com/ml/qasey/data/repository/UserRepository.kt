@@ -11,10 +11,8 @@ class UserRepository @Inject constructor(
     private val dataSource: UserDataSource
 ) {
 
-    suspend fun fetchUserData() {
-    }
 
-    suspend fun fetchUserRol(userId: String): Flow<String> {
+     fun fetchUserRol(userId: String): Flow<String> {
         return callbackFlow {
             dataSource.fetchUserById(userId).collect {
                 trySend(it?.Rol ?: "")

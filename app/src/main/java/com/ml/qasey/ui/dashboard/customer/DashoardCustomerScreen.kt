@@ -3,7 +3,9 @@ package com.ml.qasey.ui.dashboard.customer
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -17,6 +19,7 @@ import com.ml.qasey.ui.components.PrimaryButton
 import com.ml.qasey.ui.components.SimpleInputText
 import com.ml.qasey.ui.theme.QaseyTheme
 import androidx.compose.runtime.getValue
+import com.ml.qasey.utils.convertToFormatTime
 
 
 @Composable
@@ -54,9 +57,9 @@ fun CustomerDashboardBody(
     viewModel: DashboardCustomerViewModel = hiltViewModel()
     ) {
     ConstraintLayout(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize().padding(top = 30.dp)
     ) {
-        val (inputCase, buttonInitCase) = createRefs()
+        val (inputCase, buttonInitCase, timerText) = createRefs()
 
         SimpleInputText(
             modifier = Modifier.constrainAs(inputCase) {
@@ -65,25 +68,39 @@ fun CustomerDashboardBody(
                 end.linkTo(parent.end)
             },
             label = stringResource(id = R.string.label_entry_case_number),
-            value = "",
+            value = uiState.numberCase,
             onTextChange = {
-                if(it.length == 8 ) {
-                    viewModel.startTimer()
-                }
+                viewModel.onValueChangeNumberCase(it)
             }
         )
 
+        when {
+            uiState.timer != 0 -> {
+                Text(
+                    text = uiState.timer.convertToFormatTime(),
+                    style = MaterialTheme.typography.labelMedium,
+                    modifier = Modifier.constrainAs(timerText) {
+                        top.linkTo(inputCase.bottom, 15.dp)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+                )
+            }
+        }
 
 
         PrimaryButton(
             modifier = Modifier.constrainAs(buttonInitCase) {
-               top.linkTo(inputCase.bottom)
+                when {
+                    uiState.timer != 0 -> top.linkTo(timerText.bottom)
+                    else -> top.linkTo(inputCase.bottom)
+                }
                start.linkTo(parent.start)
                end.linkTo(parent.end)
             },
-            text = stringResource(id = R.string.text_button_init_case)
+            text = stringResource(id = R.string.text_button_finish_case)
         ) {
-            //TODO: Iniciar caso
+            viewModel.stopTimer()
         }
     }
 }

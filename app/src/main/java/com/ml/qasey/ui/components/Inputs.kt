@@ -74,6 +74,35 @@ fun SimpleInputText(
     )
 }
 
+
+@Composable
+fun SimpleInputText(
+    modifier: Modifier = Modifier,
+    label: String,
+    value: String,
+    onTextChange: (String) -> Unit
+) {
+    OutlinedTextField(
+        modifier = modifier,
+        value = value,
+        onValueChange = {
+            onTextChange(it)
+        },
+        label = {
+            Text(text = label)
+        },
+        colors = TextFieldDefaults.colors(
+            focusedTextColor = DarkBlue,
+            unfocusedTextColor = DarkBlue,
+            focusedContainerColor = white,
+            unfocusedContainerColor = white,
+            focusedLabelColor = DarkBlue,
+            unfocusedIndicatorColor = DarkBlue,
+            focusedIndicatorColor = DarkBlue
+        )
+    )
+}
+
 @Composable
 fun SimpleInputTextPassword(
     modifier: Modifier = Modifier,

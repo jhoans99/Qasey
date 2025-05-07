@@ -23,7 +23,7 @@ class UserDataSource @Inject constructor(
                     }
                 }
                 .addOnFailureListener {
-
+                    it
                 }
             awaitClose {  }
         }

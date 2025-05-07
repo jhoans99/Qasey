@@ -14,7 +14,7 @@ class LoginRepository @Inject constructor(
     private val userRepository: UserRepository
 ) {
 
-    suspend fun login(userName: String, password: String): Flow<Result<String>> {
+     fun login(userName: String, password: String): Flow<Result<String>> {
         return flow {
             emit(Result.Loading)
             dataSource.loginFirebase(userName, password).collect {
@@ -30,7 +30,7 @@ class LoginRepository @Inject constructor(
         }
     }
 
-    private suspend fun fetchUser(userId: String): Flow<String> = flow {
+     fun fetchUser(userId: String): Flow<String> = flow {
         userRepository.fetchUserRol(userId).collect {
             emit(it)
         }

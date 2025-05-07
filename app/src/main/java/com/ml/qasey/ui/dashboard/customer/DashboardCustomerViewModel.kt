@@ -2,7 +2,6 @@ package com.ml.qasey.ui.dashboard.customer
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ml.qasey.ui.login.LoginUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -23,7 +22,7 @@ class DashboardCustomerViewModel @Inject constructor(): ViewModel() {
         job = viewModelScope.launch {
             while (true) {
                 delay(1000L)
-                _uiState.value = _uiState.value.copy(timer = +1)
+                _uiState.value = _uiState.value.copy(timer = _uiState.value.timer +1)
             }
         }
     }
@@ -36,4 +35,13 @@ class DashboardCustomerViewModel @Inject constructor(): ViewModel() {
         stopTimer()
         _uiState.value = _uiState.value.copy(timer = 0)
     }
+
+    fun onValueChangeNumberCase(value: String) {
+        if(value.length == 8) {
+            startTimer()
+        }
+        _uiState.value = _uiState.value.copy(numberCase = value)
+    }
+
 }
+
