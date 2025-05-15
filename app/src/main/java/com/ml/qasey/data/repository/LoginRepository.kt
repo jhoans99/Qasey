@@ -8,11 +8,15 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class LoginRepository @Inject constructor(
     private val dataSource: LoginDataSource,
     private val userRepository: UserRepository
 ) {
+
+    var uidUser: String = ""
 
      fun login(userName: String, password: String): Flow<Result<String>> {
         return flow {
@@ -20,8 +24,11 @@ class LoginRepository @Inject constructor(
             dataSource.loginFirebase(userName, password).collect {
                 when(it) {
                     LoginState.ERROR -> emit(Result.Error("Fallo generico del login"))
-                    is LoginState.SUCCESS_LOGIN -> fetchUser(it.uid).collect { uid ->
-                        emit(Result.Success(uid))
+                    is LoginState.SUCCESS_LOGIN -> {
+                        uidUser = it.uid
+                        fetchUser(it.uid).collect { uid ->
+                            emit(Result.Success(uid))
+                        }
                     }
                 }
             }

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.ml.qasey.data.repository.CaseRepository
 import com.ml.qasey.model.CreateCase
 import com.ml.qasey.model.Result
+import com.ml.qasey.utils.DateUtils.getCurrentDate
 import com.ml.qasey.utils.convertToFormatTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -63,7 +64,7 @@ class DashboardCustomerViewModel @Inject constructor(
                     numberCase = _uiState.value.numberCase,
                     timer = _uiState.value.timer.convertToFormatTime(),
                     typeCase = typeCase,
-                    endDate = LocalDate.now().toString()
+                    endDate = getCurrentDate()
                 )
             ).collect {
                 when(it) {
@@ -77,6 +78,7 @@ class DashboardCustomerViewModel @Inject constructor(
                         _uiState.value = _uiState.value.copy(isLoading = true)
                     }
                     is Result.Success -> {
+                        getCasesUser()
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
                             isSuccessCreateCase = true
@@ -85,6 +87,28 @@ class DashboardCustomerViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun getCasesUser() {
+        viewModelScope.launch {
+            caseRepository.fetchCaseByUser().collect {
+                when(it) {
+                    is Result.Error -> {
+                        _uiState.value = _uiState.value.copy(isLoading = false)
+                    }
+                    Result.Loading -> {
+                        _uiState.value = _uiState.value.copy(isLoading = true)
+                    }
+                    is Result.Success -> {
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            historyCaseList = it.data
+                        )
+                    }
+                }
+            }
+        }
+
     }
 
 }
