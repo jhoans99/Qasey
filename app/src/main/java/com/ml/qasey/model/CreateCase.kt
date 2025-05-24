@@ -4,5 +4,6 @@ data class CreateCase(
     val numberCase: String,
     val timer: String,
     val typeCase: String,
-    val endDate: String
+    val endDate: String,
+    val idCase: String = ""
 )

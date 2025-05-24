@@ -1,14 +1,19 @@
 package com.ml.qasey.ui.dashboard.customer
 
 import android.widget.Toast
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -26,9 +31,16 @@ import com.ml.qasey.ui.components.PrimaryButton
 import com.ml.qasey.ui.components.SimpleInputText
 import com.ml.qasey.ui.theme.QaseyTheme
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.window.Dialog
+import com.ml.qasey.model.CreateCase
 import com.ml.qasey.ui.components.Loader
 import com.ml.qasey.ui.components.modals.CaseTypeModal
+import com.ml.qasey.ui.theme.white
 import com.ml.qasey.utils.convertToFormatTime
 
 
@@ -69,6 +81,40 @@ fun CustomerDashboardRoute(
                 Toast.makeText(context,"Se guardo el caso", Toast.LENGTH_SHORT).show()
             }
         }
+
+        uiState.isShowModalEditCase -> {
+            Dialog(
+                onDismissRequest = {
+                    viewModel.onUpdateValueShowEditModal(false)
+                },
+
+            ) {
+                var inputEditCase by remember {
+                    mutableStateOf(uiState.numberCaseEdit)
+                }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.background(white).padding(10.dp)
+                ) {
+                    Text("Editar el número de caso")
+                    SimpleInputText(
+                        Modifier,
+                        label = "Número de caso",
+                        inputEditCase
+                    ) {
+                        inputEditCase = it
+                    }
+                    PrimaryButton(
+                        Modifier.padding(top = 10.dp),
+                        "Editar caso"
+                    ) {
+                        viewModel.onUpdateValueShowEditModal(false)
+                        viewModel.updateCaseSelected()
+                    }
+                }
+            }
+        }
     }
 
 
@@ -81,13 +127,12 @@ fun CustomerDashboardRoute(
 fun CustomerDashboardScreen(uiState: DashboardCustomerUiState) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-
     ) { paddingValues ->
         Column(
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.fillMaxSize().padding(paddingValues)
         ) {
             CustomerDashboardBody(
-                modifier = Modifier.padding(horizontal = 10.dp),
+                modifier = Modifier.padding(15.dp),
                 uiState
             )
         }
@@ -100,18 +145,12 @@ fun CustomerDashboardBody(
     uiState: DashboardCustomerUiState,
     viewModel: DashboardCustomerViewModel = hiltViewModel()
     ) {
-    ConstraintLayout(
+    Column (
         modifier = modifier.fillMaxSize().padding(top = 30.dp)
     ) {
-        val (inputCase, buttonInitCase, timerText) = createRefs()
-        val (listHistoryCases) = createRefs()
 
         SimpleInputText(
-            modifier = Modifier.constrainAs(inputCase) {
-                top.linkTo(parent.top)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            },
+            modifier = Modifier.padding(10.dp),
             label = stringResource(id = R.string.label_entry_case_number),
             value = uiState.numberCase,
             onTextChange = {
@@ -124,25 +163,14 @@ fun CustomerDashboardBody(
                 Text(
                     text = uiState.timer.convertToFormatTime(),
                     style = MaterialTheme.typography.displayMedium,
-                    modifier = Modifier.constrainAs(timerText) {
-                        top.linkTo(inputCase.bottom, 15.dp)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
+                    modifier = Modifier.padding(top =  10.dp)
                 )
             }
         }
 
 
         PrimaryButton(
-            modifier = Modifier.constrainAs(buttonInitCase) {
-                when {
-                    uiState.timer != 0 -> top.linkTo(timerText.bottom)
-                    else -> top.linkTo(inputCase.bottom)
-                }
-               start.linkTo(parent.start)
-               end.linkTo(parent.end)
-            },
+            modifier = Modifier,
             text = stringResource(id = R.string.text_button_finish_case)
         ) {
             viewModel.stopTimer()
@@ -153,11 +181,7 @@ fun CustomerDashboardBody(
 
         when {
             uiState.historyCaseList.isNotEmpty() -> {
-                HistoryCasesByUser(Modifier.constrainAs(listHistoryCases) {
-                    top.linkTo(buttonInitCase.bottom, 20.dp)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                },uiState)
+                HistoryCasesByUser(Modifier.fillMaxWidth().padding(top =  10.dp),uiState)
             }
         }
     }
@@ -177,9 +201,58 @@ fun HistoryCasesByUser(
             style = MaterialTheme.typography.headlineMedium
         )
 
-        LazyColumn {
+        LazyColumn(Modifier) {
             items(uiState.historyCaseList) {
-                Text(it.numberCase)
+                HistoryCaseItem(Modifier.fillMaxWidth(),it)
+            }
+        }
+    }
+}
+
+@Composable
+fun HistoryCaseItem(
+    modifier: Modifier,
+    case: CreateCase,
+    viewModel: DashboardCustomerViewModel = hiltViewModel()
+) {
+    Card(
+        modifier = modifier.padding(top = 15.dp, bottom = 5.dp),
+        shape = RoundedCornerShape(10.dp),
+        elevation = CardDefaults.elevatedCardElevation(
+            defaultElevation = 5.dp
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = white
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp)
+        ) {
+            Text(
+                "Número de caso",
+                style = MaterialTheme.typography.labelMedium
+            )
+            Text(case.numberCase)
+
+            Spacer(Modifier.height(10.dp))
+
+            Text(
+                "Tipo de caso",
+                style = MaterialTheme.typography.labelMedium
+            )
+            Text(case.typeCase)
+
+            Spacer(Modifier.height(10.dp))
+
+            Text(
+                "Fecha y tiempo del caso",
+                style = MaterialTheme.typography.labelMedium
+            )
+            Text("${case.timer}, ${case.endDate}")
+
+            PrimaryButton(Modifier, "Editar") {
+                viewModel.onUpdateValueShowEditModal(true)
+                viewModel.saveNumberCaseToEdit(case.numberCase)
             }
         }
     }
@@ -190,7 +263,7 @@ fun HistoryCasesByUser(
 @Composable
 fun CustomerDashboardPreview() {
     QaseyTheme {
-        CustomerDashboardRoute()
+        HistoryCaseItem(Modifier.fillMaxWidth().padding(15.dp), CreateCase(numberCase = "123456", timer = "00:00", "Finalizada", "23/05/2025", ""))
     }
 }
 

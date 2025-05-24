@@ -9,5 +9,7 @@ data class DashboardCustomerUiState(
     val isShowModalTypeCase: Boolean = false,
     val isSuccessCreateCase: Boolean = false,
     val isFailureCreateCase: Boolean = false,
-    val historyCaseList: List<CreateCase> = emptyList()
+    val historyCaseList: List<CreateCase> = emptyList(),
+    val isShowModalEditCase: Boolean = false,
+    val numberCaseEdit: String = ""
 )

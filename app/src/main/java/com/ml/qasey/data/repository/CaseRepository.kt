@@ -35,4 +35,8 @@ class CaseRepository @Inject constructor(
     }.catch {
         emit(Result.Error("Error obteniendo los casos"))
     }
+
+    suspend fun updateCaseByUser(id: String, updateCase: CreateCase) {
+
+    }
 }

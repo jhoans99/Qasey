@@ -18,8 +18,7 @@ class CasesDataSource @Inject constructor(
             firestore.collection("Cases")
                 .document(uidUser)
                 .collection("casesByUser")
-                .document(createCase.numberCase)
-                .set(createCase)
+                .add(createCase)
                 .addOnSuccessListener {
                     trySend(CreateCaseState.CREATE_CASE_SUCCESS)
                 }
@@ -43,8 +42,8 @@ class CasesDataSource @Inject constructor(
                             numberCase = document.data.get("numberCase").toString(),
                             endDate = document.data.get("endDate").toString(),
                             timer = document.data.get("timer").toString(),
-                            typeCase = document.data.get("timer").toString()
-
+                            typeCase = document.data.get("typeCase").toString(),
+                            idCase = document.id
                         )
                         listCaseUser.add(createCaseItem)
                     }

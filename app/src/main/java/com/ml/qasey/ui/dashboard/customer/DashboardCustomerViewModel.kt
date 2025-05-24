@@ -108,6 +108,18 @@ class DashboardCustomerViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun onUpdateValueShowEditModal(value: Boolean) {
+        _uiState.value = _uiState.value.copy(isShowModalEditCase = value)
+    }
+
+    fun saveNumberCaseToEdit(numberCase: String) {
+        _uiState.value = _uiState.value.copy(numberCaseEdit = numberCase)
+    }
+
+    fun updateCaseSelected(numberCase: String) {
+
 
     }
 
