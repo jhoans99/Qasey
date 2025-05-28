@@ -1,8 +1,9 @@
 package com.ml.qasey.data.repository
 
 import com.ml.qasey.data.datasource.cases.CasesDataSource
-import com.ml.qasey.model.CreateCase
+import com.ml.qasey.model.cases.CreateCase
 import com.ml.qasey.model.Result
+import com.ml.qasey.model.cases.UpdateCase
 import com.ml.qasey.model.enums.CreateCaseState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -36,7 +37,16 @@ class CaseRepository @Inject constructor(
         emit(Result.Error("Error obteniendo los casos"))
     }
 
-    suspend fun updateCaseByUser(id: String, updateCase: CreateCase) {
-
+    suspend fun updateCaseByUser(id: String, numberCaseEdit: String): Flow<Result<Unit>> = flow {
+        emit(Result.Loading)
+        val updateCase = UpdateCase(caseId = id, numberCase = numberCaseEdit,loginRepository.uidUser)
+        casesDataSource.updateCase(updateCase).collect {
+            when(it) {
+                true -> emit(Result.Success(Unit))
+                false -> emit(Result.Error("Hubo un error"))
+            }
+        }
+    }.catch {
+        emit(Result.Error("Error al actualizar el caso"))
     }
 }

@@ -1,7 +1,8 @@
 package com.ml.qasey.data.datasource.cases
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.ml.qasey.model.CreateCase
+import com.ml.qasey.model.cases.CreateCase
+import com.ml.qasey.model.cases.UpdateCase
 import com.ml.qasey.model.enums.CreateCaseState
 import com.ml.qasey.model.response.User
 import kotlinx.coroutines.channels.awaitClose
@@ -52,6 +53,27 @@ class CasesDataSource @Inject constructor(
                 .addOnFailureListener {
 
                 }
+            awaitClose {}
+        }
+    }
+
+    suspend fun updateCase(updateCase: UpdateCase): Flow<Boolean> {
+        return callbackFlow {
+            val update = hashMapOf<String, Any>(
+                "numberCase" to updateCase.numberCase
+            )
+            firestore.collection("Cases")
+                .document(updateCase.userId)
+                .collection("casesByUser")
+                .document(updateCase.caseId)
+                .update(update)
+                .addOnSuccessListener {
+                    trySend(true)
+                }
+                .addOnFailureListener {
+                    trySend(false)
+                }
+
             awaitClose {}
         }
     }

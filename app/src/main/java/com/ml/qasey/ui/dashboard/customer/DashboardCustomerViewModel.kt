@@ -3,7 +3,7 @@ package com.ml.qasey.ui.dashboard.customer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ml.qasey.data.repository.CaseRepository
-import com.ml.qasey.model.CreateCase
+import com.ml.qasey.model.cases.CreateCase
 import com.ml.qasey.model.Result
 import com.ml.qasey.utils.DateUtils.getCurrentDate
 import com.ml.qasey.utils.convertToFormatTime
@@ -13,7 +13,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -114,13 +113,27 @@ class DashboardCustomerViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(isShowModalEditCase = value)
     }
 
-    fun saveNumberCaseToEdit(numberCase: String) {
-        _uiState.value = _uiState.value.copy(numberCaseEdit = numberCase)
+    fun saveNumberCaseToEdit(case: CreateCase) {
+        _uiState.value = _uiState.value.copy(caseEdit = case)
     }
 
-    fun updateCaseSelected(numberCase: String) {
-
-
+    fun updateCaseSelected(numberCase: String, idCase: String) {
+        viewModelScope.launch {
+            caseRepository.updateCaseByUser(id = idCase, numberCaseEdit = numberCase).collect {
+                when(it) {
+                    is Result.Error -> {
+                        _uiState.value = _uiState.value.copy(isLoading = false)
+                    }
+                    Result.Loading -> {
+                        _uiState.value = _uiState.value.copy(isLoading = true)
+                    }
+                    is Result.Success -> {
+                        _uiState.value = _uiState.value.copy(isLoading = false)
+                        getCasesUser()
+                    }
+                }
+            }
+        }
     }
 
 }

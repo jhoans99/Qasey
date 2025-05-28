@@ -24,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ml.qasey.R
 import com.ml.qasey.ui.components.PrimaryButton
@@ -37,7 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.Dialog
-import com.ml.qasey.model.CreateCase
+import com.ml.qasey.model.cases.CreateCase
 import com.ml.qasey.ui.components.Loader
 import com.ml.qasey.ui.components.modals.CaseTypeModal
 import com.ml.qasey.ui.theme.white
@@ -90,7 +89,7 @@ fun CustomerDashboardRoute(
 
             ) {
                 var inputEditCase by remember {
-                    mutableStateOf(uiState.numberCaseEdit)
+                    mutableStateOf(uiState.caseEdit.numberCase)
                 }
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -110,7 +109,7 @@ fun CustomerDashboardRoute(
                         "Editar caso"
                     ) {
                         viewModel.onUpdateValueShowEditModal(false)
-                        viewModel.updateCaseSelected()
+                        viewModel.updateCaseSelected(inputEditCase, uiState.caseEdit.idCase)
                     }
                 }
             }
@@ -252,7 +251,7 @@ fun HistoryCaseItem(
 
             PrimaryButton(Modifier, "Editar") {
                 viewModel.onUpdateValueShowEditModal(true)
-                viewModel.saveNumberCaseToEdit(case.numberCase)
+                viewModel.saveNumberCaseToEdit(case)
             }
         }
     }

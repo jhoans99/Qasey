@@ -1,6 +1,6 @@
 package com.ml.qasey.ui.dashboard.customer
 
-import com.ml.qasey.model.CreateCase
+import com.ml.qasey.model.cases.CreateCase
 
 data class DashboardCustomerUiState(
     val isLoading: Boolean = false,
@@ -11,5 +11,5 @@ data class DashboardCustomerUiState(
     val isFailureCreateCase: Boolean = false,
     val historyCaseList: List<CreateCase> = emptyList(),
     val isShowModalEditCase: Boolean = false,
-    val numberCaseEdit: String = ""
+    val caseEdit: CreateCase = CreateCase()
 )
