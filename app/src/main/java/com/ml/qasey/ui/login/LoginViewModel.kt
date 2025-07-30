@@ -1,5 +1,6 @@
 package com.ml.qasey.ui.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ml.qasey.data.repository.LoginRepository
@@ -45,8 +46,14 @@ class LoginViewModel @Inject constructor(
                     }
                     is Result.Success -> {
                         _uiState.value = _uiState.value.copy(isLoading = false)
-                        val route = if(it.data == "customer") CustomerDashboard else TeamLeadDashboard
-                        onSuccessLogin(route)
+                        if(it.data.isEnabled) {
+                            val route = if(it.data.rol == "customer") CustomerDashboard else TeamLeadDashboard
+                            onSuccessLogin(route)
+                        } else {
+                            //TODO: show modal customer is not enabled
+                            Log.d("TAG--", "Customer is not enabled")
+                        }
+
                     }
                 }
             }

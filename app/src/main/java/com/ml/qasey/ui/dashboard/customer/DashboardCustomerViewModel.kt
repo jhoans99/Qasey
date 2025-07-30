@@ -45,7 +45,7 @@ class DashboardCustomerViewModel @Inject constructor(
 
     fun onValueChangeNumberCase(value: String) {
         if(value.length == 8) {
-            startTimer()
+            onShowModalTypeCase(true)
         }
         _uiState.value = _uiState.value.copy(numberCase = value)
     }

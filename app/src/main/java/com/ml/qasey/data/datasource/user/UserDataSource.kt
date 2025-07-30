@@ -28,4 +28,43 @@ class UserDataSource @Inject constructor(
             awaitClose {  }
         }
     }
+
+    fun fetchAllUsers(): Flow<List<User>> {
+        return callbackFlow {
+            firestore.collection("Users")
+                .get()
+                .addOnSuccessListener {
+                    val userList = it.map { document ->
+                        User(
+                            id = document.id,
+                            Rol = document.getString("Rol"),
+                            lastNames = document.getString("lastNames"),
+                            names = document.getString("names"),
+                            isEnabled = document.getBoolean("isEnabled"),
+                            tokenNotification = document.getString("TokenId")
+                        )
+                    }
+                    trySend(userList)
+                }
+                .addOnFailureListener {
+                    it
+                }
+            awaitClose {}
+        }
+    }
+
+    fun updateStatusCustomer(userId: String, enabled: Boolean): Flow<Boolean> {
+        return callbackFlow {
+            firestore.collection("Users")
+                .document(userId)
+                .update("isEnabled", enabled)
+                .addOnSuccessListener {
+                    trySend(true)
+                }
+                .addOnFailureListener {
+                    trySend(false)
+                }
+            awaitClose {}
+        }
+    }
 }

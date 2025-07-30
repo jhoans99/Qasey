@@ -91,6 +91,7 @@ fun CustomerDashboardRoute(
                 var inputEditCase by remember {
                     mutableStateOf(uiState.caseEdit.numberCase)
                 }
+
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
