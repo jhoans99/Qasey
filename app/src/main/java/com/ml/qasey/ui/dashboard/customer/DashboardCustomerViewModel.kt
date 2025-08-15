@@ -24,28 +24,18 @@ class DashboardCustomerViewModel @Inject constructor(
     val uiState: StateFlow<DashboardCustomerUiState> = _uiState
 
     private var job: Job? = null
+    private val timerJobs = mutableMapOf<String, Job>()
 
-    fun startTimer() {
-        job = viewModelScope.launch {
-            while (true) {
-                delay(1000L)
-                _uiState.value = _uiState.value.copy(timer = _uiState.value.timer +1)
-            }
-        }
-    }
+    //Use to UiState
+    private val currentCasesByUser: ArrayList<String> = ArrayList()
 
-    fun stopTimer() {
-        job?.cancel()
-    }
-
-    fun resetTimer() {
-        stopTimer()
-        _uiState.value = _uiState.value.copy(timer = 0)
-    }
 
     fun onValueChangeNumberCase(value: String) {
-        if(value.length == 8) {
-            onShowModalTypeCase(true)
+        if(value.length == 8 && currentCasesByUser.size < 4) {
+            currentCasesByUser.add(value)
+            startTimerForCase(value)
+        } else if(currentCasesByUser.size == 4) {
+            //Mostrar modal de que solo se puden agregar 4 casos
         }
         _uiState.value = _uiState.value.copy(numberCase = value)
     }
@@ -61,7 +51,7 @@ class DashboardCustomerViewModel @Inject constructor(
             caseRepository.createCase(
                 CreateCase(
                     numberCase = _uiState.value.numberCase,
-                    timer = _uiState.value.timer.convertToFormatTime(),
+                    timer = "",
                     typeCase = typeCase,
                     endDate = getCurrentDate()
                 )
@@ -77,19 +67,20 @@ class DashboardCustomerViewModel @Inject constructor(
                         _uiState.value = _uiState.value.copy(isLoading = true)
                     }
                     is Result.Success -> {
-                        getCasesUser()
+                        getCasesUser(it.data)
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
                             isSuccessCreateCase = true
                         )
+                        //Remove the currentCases list item to save
                     }
                 }
             }
         }
     }
 
-    fun getCasesUser() {
-        viewModelScope.launch {
+    fun getCasesUser(data: String) {
+       viewModelScope.launch {
             caseRepository.fetchCaseByUser().collect {
                 when(it) {
                     is Result.Error -> {
@@ -129,11 +120,31 @@ class DashboardCustomerViewModel @Inject constructor(
                     }
                     is Result.Success -> {
                         _uiState.value = _uiState.value.copy(isLoading = false)
-                        getCasesUser()
+                        //getCasesUser(it.data)
                     }
                 }
             }
         }
+    }
+    
+    fun startTimerForCase(caseId: String) {
+        // Si ya hay un timer corriendo para este caso, no crear otro
+        if (timerJobs.containsKey(caseId)) return
+        
+        timerJobs[caseId] = viewModelScope.launch {
+            while (true) {
+                delay(1000L)
+                val currentTimers = _uiState.value.activeTimers.toMutableMap()
+                currentTimers[caseId] = (currentTimers[caseId] ?: 0) + 1
+                _uiState.value = _uiState.value.copy(activeTimers = currentTimers)
+            }
+        }
+    }
+    
+    fun stopTimerForCase(caseId: String) {
+        timerJobs[caseId]?.cancel()
+        timerJobs.remove(caseId)
+        //Active modal type Case
     }
 
 }

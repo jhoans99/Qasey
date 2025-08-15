@@ -3,6 +3,7 @@ package com.ml.qasey.data.repository
 import com.ml.qasey.data.datasource.cases.CasesDataSource
 import com.ml.qasey.model.cases.CreateCase
 import com.ml.qasey.model.Result
+import com.ml.qasey.model.Result.*
 import com.ml.qasey.model.cases.UpdateCase
 import com.ml.qasey.model.enums.CreateCaseState
 import kotlinx.coroutines.flow.Flow
@@ -16,12 +17,12 @@ class CaseRepository @Inject constructor(
     private val loginRepository: LoginRepository
 ) {
 
-    suspend fun createCase(createCase: CreateCase): Flow<Result<Unit>> = flow {
+    suspend fun createCase(createCase: CreateCase): Flow<Result<String>> = flow {
         emit(Result.Loading)
         casesDataSource.saveCase(createCase, loginRepository.uidUser).collect {
             when(it) {
-                CreateCaseState.CREATE_CASE_SUCCESS -> emit(Result.Success(Unit))
-                CreateCaseState.ERROR -> emit(Result.Error("Error creando el caso"))
+                CreateCaseState.ERROR -> emit(Error("Error creando el caso"))
+                is CreateCaseState.CreateCaseSuccess -> emit(Success(it.id))
             }
         }
     }.catch {

@@ -21,7 +21,7 @@ class CasesDataSource @Inject constructor(
                 .collection("casesByUser")
                 .add(createCase)
                 .addOnSuccessListener {
-                    trySend(CreateCaseState.CREATE_CASE_SUCCESS)
+                    trySend(CreateCaseState.CreateCaseSuccess(it.id))
                 }
                 .addOnFailureListener {
                     trySend(CreateCaseState.ERROR)

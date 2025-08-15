@@ -13,6 +13,7 @@ import com.ml.qasey.ui.theme.white
 fun PrimaryButton(
     modifier: Modifier,
     text: String,
+    isEnabled: Boolean = true,
     onClickAction: () -> Unit
 ) {
     Button(
@@ -23,7 +24,8 @@ fun PrimaryButton(
         colors = ButtonDefaults.buttonColors(
             containerColor = DarkBlue,
             contentColor =  white
-        )
+        ),
+        enabled = isEnabled
     ) {
         Text(text = text)
     }

@@ -11,5 +11,6 @@ data class DashboardCustomerUiState(
     val isFailureCreateCase: Boolean = false,
     val historyCaseList: List<CreateCase> = emptyList(),
     val isShowModalEditCase: Boolean = false,
-    val caseEdit: CreateCase = CreateCase()
+    val caseEdit: CreateCase = CreateCase(),
+    val activeTimers: Map<String, Int> = emptyMap()
 )
