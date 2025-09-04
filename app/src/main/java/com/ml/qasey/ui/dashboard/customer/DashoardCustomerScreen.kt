@@ -52,10 +52,6 @@ fun CustomerDashboardRoute(
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
-    LaunchedEffect(Unit) {
-        //viewModel.getCasesUser()
-    }
-
     when {
         uiState.isShowModalTypeCase -> {
             CaseTypeModal(
@@ -162,15 +158,15 @@ fun CustomerDashboardBody(
 
 
         when {
-            uiState.historyCaseList.isNotEmpty() -> {
-                HistoryCasesByUser(Modifier.fillMaxWidth().padding(top =  10.dp),uiState)
+            uiState.currentCasesByUser.isNotEmpty() -> {
+                ActiveCasesByUser(Modifier.fillMaxWidth().padding(top =  10.dp),uiState)
             }
         }
     }
 }
 
 @Composable
-fun HistoryCasesByUser(
+fun ActiveCasesByUser(
     modifier: Modifier,
     uiState: DashboardCustomerUiState
 ) {
@@ -184,17 +180,17 @@ fun HistoryCasesByUser(
         )
 
         LazyColumn(Modifier) {
-            items(uiState.historyCaseList) {
-                HistoryCaseItem(Modifier.fillMaxWidth(),it, uiState)
+            items(uiState.currentCasesByUser) {
+                ActiveCasesByUserItem(Modifier.fillMaxWidth(),it, uiState)
             }
         }
     }
 }
 
 @Composable
-fun HistoryCaseItem(
+fun ActiveCasesByUserItem(
     modifier: Modifier,
-    case: CreateCase,
+    caseId: String,
     uiState: DashboardCustomerUiState,
     viewModel: DashboardCustomerViewModel = hiltViewModel()
 ) {
@@ -215,15 +211,7 @@ fun HistoryCaseItem(
                 "Número de caso",
                 style = MaterialTheme.typography.labelMedium
             )
-            Text(case.numberCase)
-
-            Spacer(Modifier.height(10.dp))
-
-            Text(
-                "Tipo de caso",
-                style = MaterialTheme.typography.labelMedium
-            )
-            Text(case.typeCase)
+            Text(caseId)
 
             Spacer(Modifier.height(10.dp))
 
@@ -232,7 +220,7 @@ fun HistoryCaseItem(
                 style = MaterialTheme.typography.labelMedium
             )
 
-            val timerValue = uiState.activeTimers[case.idCase] ?: 0
+            val timerValue = uiState.activeTimers[caseId] ?: 0
             Text(
                 timerValue.convertToFormatTime()
             )
@@ -243,16 +231,16 @@ fun HistoryCaseItem(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                val isTimerRunning = uiState.activeTimers.containsKey(case.idCase)
+                val isTimerRunning = uiState.activeTimers.containsKey(caseId)
                 
                 PrimaryButton(
                     Modifier.weight(1f), 
                     if (isTimerRunning) "Pausar" else "Iniciar"
                 ) {
                     if (isTimerRunning) {
-                        viewModel.stopTimerForCase(case.idCase)
+                        viewModel.stopTimerForCase(caseId)
                     } else {
-                        viewModel.startTimerForCase(case.idCase)
+                        viewModel.startTimerForCase(caseId)
                     }
                 }
                 
@@ -262,9 +250,9 @@ fun HistoryCaseItem(
                     Modifier.weight(1f), 
                     "Finalizar"
                 ) {
-                    viewModel.stopTimerForCase(case.idCase)
-                    viewModel.onUpdateValueShowEditModal(true)
-                    viewModel.saveNumberCaseToEdit(case)
+                    viewModel.stopTimerForCase(caseId)
+                    viewModel.saveCacheFinishCase(caseId, timerValue.convertToFormatTime())
+                    viewModel.onShowModalTypeCase(true)
                 }
             }
         }
@@ -276,11 +264,6 @@ fun HistoryCaseItem(
 @Composable
 fun CustomerDashboardPreview() {
     QaseyTheme {
-        HistoryCaseItem(
-            Modifier.fillMaxWidth().padding(15.dp), 
-            CreateCase(numberCase = "123456", timer = "00:00", "Finalizada", "23/05/2025", ""),
-            DashboardCustomerUiState()
-        )
     }
 }
 

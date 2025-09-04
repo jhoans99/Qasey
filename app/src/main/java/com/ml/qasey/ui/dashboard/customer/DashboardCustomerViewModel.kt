@@ -29,15 +29,23 @@ class DashboardCustomerViewModel @Inject constructor(
     //Use to UiState
     private val currentCasesByUser: ArrayList<String> = ArrayList()
 
+    private var caseId: String = ""
+    private var timeToCase: String = ""
+
 
     fun onValueChangeNumberCase(value: String) {
-        if(value.length == 8 && currentCasesByUser.size < 4) {
-            currentCasesByUser.add(value)
+        var valueChange = value
+        if(value.length == 8 && currentCasesByUser.size <= 4) {
+            _uiState.value.currentCasesByUser.add(value)
+            _uiState.value = _uiState.value.copy(
+                currentCasesByUser = _uiState.value.currentCasesByUser,
+            )
             startTimerForCase(value)
-        } else if(currentCasesByUser.size == 4) {
-            //Mostrar modal de que solo se puden agregar 4 casos
+            valueChange = ""
+        } else if(currentCasesByUser.size > 4) {
+            valueChange = ""
         }
-        _uiState.value = _uiState.value.copy(numberCase = value)
+        _uiState.value = _uiState.value.copy(numberCase = valueChange)
     }
 
     fun onShowModalTypeCase(value: Boolean) {
@@ -50,8 +58,8 @@ class DashboardCustomerViewModel @Inject constructor(
         viewModelScope.launch {
             caseRepository.createCase(
                 CreateCase(
-                    numberCase = _uiState.value.numberCase,
-                    timer = "",
+                    numberCase = caseId,
+                    timer = timeToCase,
                     typeCase = typeCase,
                     endDate = getCurrentDate()
                 )
@@ -67,32 +75,18 @@ class DashboardCustomerViewModel @Inject constructor(
                         _uiState.value = _uiState.value.copy(isLoading = true)
                     }
                     is Result.Success -> {
-                        getCasesUser(it.data)
-                        _uiState.value = _uiState.value.copy(
-                            isLoading = false,
-                            isSuccessCreateCase = true
-                        )
-                        //Remove the currentCases list item to save
-                    }
-                }
-            }
-        }
-    }
 
-    fun getCasesUser(data: String) {
-       viewModelScope.launch {
-            caseRepository.fetchCaseByUser().collect {
-                when(it) {
-                    is Result.Error -> {
-                        _uiState.value = _uiState.value.copy(isLoading = false)
-                    }
-                    Result.Loading -> {
-                        _uiState.value = _uiState.value.copy(isLoading = true)
-                    }
-                    is Result.Success -> {
+                        val updatedCasesList = ArrayList(_uiState.value.currentCasesByUser)
+                        updatedCasesList.remove(caseId)
+
+                        val updatedTimers = _uiState.value.activeTimers.toMutableMap()
+                        updatedTimers.remove(caseId)
+                        
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
-                            historyCaseList = it.data
+                            isSuccessCreateCase = true,
+                            currentCasesByUser = updatedCasesList,
+                            activeTimers = updatedTimers
                         )
                     }
                 }
@@ -104,9 +98,6 @@ class DashboardCustomerViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(isShowModalEditCase = value)
     }
 
-    fun saveNumberCaseToEdit(case: CreateCase) {
-        _uiState.value = _uiState.value.copy(caseEdit = case)
-    }
 
     fun updateCaseSelected(numberCase: String, idCase: String) {
         viewModelScope.launch {
@@ -144,7 +135,11 @@ class DashboardCustomerViewModel @Inject constructor(
     fun stopTimerForCase(caseId: String) {
         timerJobs[caseId]?.cancel()
         timerJobs.remove(caseId)
-        //Active modal type Case
+    }
+
+    fun saveCacheFinishCase(caseId: String, timeToCase: String) {
+        this.caseId = caseId
+        this.timeToCase = timeToCase
     }
 
 }
